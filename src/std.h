@@ -7,12 +7,28 @@
 #include <stdlib.h>
 #include <string.h>
 
+// TODO: Optimize stdvec_rev().
+// TODO: Use docstrings for function descriptions.
+// TODO: Create a malloc() wrapper so we don't keep
+//       checking to see if malloc() succeeded or not.
+
+// Panic out and exit with a message.
 #define __STD_PANIC(msg, ...)                                           \
   do {                                                                  \
     fprintf(stderr, "[PANIC: %s]: " msg "\n", __func__, ##__VA_ARGS__); \
     exit(EXIT_FAILURE);                                                 \
   } while (0)
 
+// Generic dynamic array append macro. It should be used for
+// structures such as:
+// struct {
+//   void *;
+//   size_t;
+//   size_t;
+//   size_t;
+// }
+// The names may be different, which is why we have the params of
+// dadata, dastride, dalen, dacap, value.
 #define __STD_DA_APPEND(da, dadata, dastride, dalen, dacap, value)      \
   do {                                                                  \
     if ((da)->dalen >= (da)->dacap) {                                   \
@@ -23,6 +39,7 @@
     (da)->dalen += 1;                                                   \
   } while (0)                                                           \
 
+// Check if memory is valid.
 #define __STD_CHECK_MEM(m)                              \
   do {                                                  \
     if ((m) == NULL) __STD_PANIC("invalid memory");     \
@@ -44,6 +61,7 @@ struct StdVec
 };
 typedef struct StdVec StdVec;
 
+// Create a new stdvec.
 StdVec
 stdvec_create(size_t stride)
 {
@@ -59,6 +77,7 @@ stdvec_create(size_t stride)
   };
 }
 
+// Create a new stdvec with a predefined capacity.
 StdVec
 stdvec_wcap(size_t stride, size_t cap)
 {
@@ -75,6 +94,7 @@ stdvec_wcap(size_t stride, size_t cap)
   };
 }
 
+// Push a value into the end of the stdvec.
 void
 stdvec_push(StdVec *stdvec, void *value)
 {
@@ -82,6 +102,7 @@ stdvec_push(StdVec *stdvec, void *value)
   __STD_DA_APPEND(stdvec, data, stride, len, cap, value);
 }
 
+// Return the value at a specific index.
 void *
 stdvec_at(StdVec *stdvec, size_t i)
 {
@@ -89,6 +110,7 @@ stdvec_at(StdVec *stdvec, size_t i)
   return stdvec->data+i*stdvec->stride;
 }
 
+// Remove the value at a specific index.
 void
 stdvec_rm_at(StdVec *stdvec, size_t idx)
 {
@@ -97,6 +119,7 @@ stdvec_rm_at(StdVec *stdvec, size_t idx)
   stdvec->len--;
 }
 
+// Remove all occurrences of elem.
 void
 stdvec_rm(StdVec *stdvec, void *elem)
 {
@@ -108,6 +131,8 @@ stdvec_rm(StdVec *stdvec, void *elem)
   }
 }
 
+// Check to see if the stdvec contains elem.
+// Returns a pointer to that element if it is present.
 void *
 stdvec_contains(StdVec *stdvec, void *elem)
 {
@@ -120,12 +145,14 @@ stdvec_contains(StdVec *stdvec, void *elem)
   return NULL;
 }
 
+// Clear the stdvec.
 void
 stdvec_clr(StdVec *stdvec)
 {
   stdvec->len = 0;
 }
 
+// Free underlying memory of the stdvec.
 void
 stdvec_free(StdVec *stdvec)
 {
@@ -135,6 +162,8 @@ stdvec_free(StdVec *stdvec)
   stdvec->len = stdvec->cap = stdvec->stride = 0;
 }
 
+// Apply a mapping function to each element.
+// Returns a new stdvec.
 StdVec
 stdvec_map(StdVec *stdvec, void (*mapfunc)(void *))
 {
@@ -147,13 +176,14 @@ stdvec_map(StdVec *stdvec, void (*mapfunc)(void *))
   return mapped;
 }
 
+// Quicksort a stdvec.
 void
 stdvec_qsort(StdVec *stdvec, int (*compar)(const void *, const void *))
 {
   qsort(stdvec->data, stdvec->len, stdvec->stride, compar);
 }
 
-// TODO: optimize
+// Reverse the contents of the stdvec.
 void
 stdvec_rev(StdVec *stdvec)
 {
