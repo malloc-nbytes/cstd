@@ -1,3 +1,18 @@
+/* Style Guide
+  - Functions should be formatted as such:
+      <return type>
+      <name>(<params>)
+      {
+        body...
+      }
+  - All indents should be 2 spaces.
+  - Private functions/structs should be prepended with 2 underscores __.
+  - Macros should be in CAPS.
+  - Always put a comment after `#endif` with what it is ending.
+  - Make #include's alphabetical.
+  - Do not have 1 line `if` statements.
+*/
+
 #ifndef STD_H
 #define STD_H
 
@@ -40,9 +55,11 @@
   } while (0)                                                           \
 
 // Check if memory is valid.
-#define __STD_CHECK_MEM(m)                              \
-  do {                                                  \
-    if ((m) == NULL) __STD_PANIC("invalid memory");     \
+#define __STD_CHECK_MEM(m)                      \
+  do {                                          \
+    if ((m) == NULL)  {                         \
+      __STD_PANIC("invalid memory");            \
+    }                                           \
   } while (0)
 
 // Compound Literal.
