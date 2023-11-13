@@ -1,0 +1,50 @@
+#+TITLE: Style Guide
+- Functions should be formatted as such:
+
+#+begin_example
+<return type>
+<name>(<params>)
+{
+  body...
+}
+#+end_example
+
+- All indents should be 2 spaces.
+- Private functions/structs should be prepended with 2 underscores =__=.
+- Macros should be in CAPS.
+- Always put a comment after =#endif= with what it is ending.
+- Make =#include='s alphabetical.
+- Do not have 1 line =if= statements.
+- All functions should have the corrosponding data structure it is working with before the name.
+
+=/Function Names/=
+#+begin_example
+struct StdVec
+{
+  ...
+}
+StdVec
+stdvec_create();
+#+end_example
+
+Or:
+
+#+begin_example
+struct StdUMap
+{
+  ...
+}
+StdUMap
+stdumap_create();
+
+#+end_example
+- All structs need to be prepended with =Std=.
+- All =if=, =for=, =while= etc. should have brackets.
+- =+=, =-=, =*=, =/=, etc. does not need whitespace, but === should.
+- Lines have a soft limit of 85 characters.
+- All new implementations should have a comment like this before it:
+#+begin_src c
+  //////////////////////////////
+  // Structure IMPLEMENTATION
+#+end_src
+
