@@ -11,6 +11,30 @@
   - Always put a comment after `#endif` with what it is ending.
   - Make #include's alphabetical.
   - Do not have 1 line `if` statements.
+  - All functions should have the corrosponding data structure it is working with before the name.
+    Example:
+      struct StdVec
+      {
+        ...
+      }
+      StdVec
+      stdvec_create();
+    Or
+      struct StdUMap
+      {
+        ...
+      }
+      StdUMap
+      stdumap_create();
+  - All structs need to be prepended with `Std`.
+  - All if, for, while etc. should have brackets.
+  - If a function has a return value, but you are not using it, make sure to (void) it.
+  - +, -, *, /, etc. does not need whitespace, but `=` should.
+  - Lines have a soft limit of 85 characters.
+  - All new implementations should have:
+    //////////////////////////////
+    // Structure IMPLEMENTATION
+    before it.
 */
 
 #ifndef STD_H
@@ -365,6 +389,6 @@ stdumap_get(StdUMap *stdumap, void *key)
   __StdUMapNode *p = __stdumap_find(stdumap->table[idx], key, NULL);
   return p ? p->value : NULL;
 }
-
 #endif // STDUMAP_IMPL
+
 #endif // STD_H
