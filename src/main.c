@@ -1,28 +1,30 @@
-#define STDUMAP_IMPL
 #define STDVEC_IMPL
 #include "./cstd.h"
 #include <stdio.h>
 #include <limits.h>
 
-unsigned int hashfunc(const void *k) {
-  return *(int*)k % INT_MAX;
+void mapfunc(void *x) {
+  char *s = (char*)x;
+  s[0] = 'a';
 }
 
 int
 main(void)
 {
-  StdUMap m = stdumap_create(sizeof(int), sizeof(int), hashfunc);
+  StdVec vec = stdvec_create(sizeof(char*));
 
-  for (int i = 0; i < 10; ++i) {
-    stdumap_insert(&m, &i, &i);
+  char *s1 = "hello";
+  char *s2 = "world";
+
+  stdvec_push(&vec, s1);
+  stdvec_push(&vec, s2);
+
+  StdVec mapped = stdvec_map(&vec, mapfunc);
+
+  for (int i = 0; i < mapped.len; ++i) {
+    printf("%s\n", (char*)stdvec_at(&mapped, i));
   }
 
-  for (int i = 0; i < m.len; ++i) {
-    int *k = stdumap_get(&m, &i);
-    printf("%d\n", *k);
-  }
-
-  stdumap_free(&m);
-
+  stdvec_free(&mapped);
   return 0;
 }
