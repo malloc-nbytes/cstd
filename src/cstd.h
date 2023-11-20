@@ -7,12 +7,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-// TODO: Optimize stdvec_rev().
-// TODO: Use docstrings for function descriptions.
-// TODO: Create a malloc() wrapper so we don't keep
-//       checking to see if malloc() succeeded or not.
-
-// Panic out and exit with a message.
+// A variadic panic out and exit with a message.
+// Example usage:
+//   int num;
+//   __STD_PANIC("got num: %d", num);
 #define __STD_PANIC(msg, ...)                                           \
   do {                                                                  \
     fprintf(stderr, "[PANIC: %s]: " msg "\n", __func__, ##__VA_ARGS__); \
@@ -22,13 +20,20 @@
 // Generic dynamic array append macro. It should be used for
 // structures such as:
 // struct {
-//   void *;
-//   size_t;
-//   size_t;
-//   size_t;
+//   pointer;
+//   number;
+//   number;
+//   number;
 // }
 // The names may be different, which is why we have the params of
 // dadata, dastride, dalen, dacap, value.
+// Example usage:
+//   struct Vec {
+//     void *data;
+//     size_t stride, len, cap;
+//   };
+//   Vec v;
+//   __STD_DA_APPEND(&v, data, stride, len, cap);
 #define __STD_DA_APPEND(da, dadata, dastride, dalen, dacap, value)      \
   do {                                                                  \
     if ((da)->dalen >= (da)->dacap) {                                   \
@@ -47,6 +52,19 @@
     }                                           \
   } while (0)
 
+// Safe malloc() wrapper so we don't have to
+// keep checking if malloc() failed or not.
+// Example usage:
+//   int *ptr = __STD_S_MALLOC(sizeof(int));
+#define __STD_S_MALLOC(bytes) ({                        \
+      void *p = malloc(bytes);                          \
+      if (!p) {                                         \
+        fprintf(stderr, "Memory allocation failed.\n"); \
+        exit(EXIT_FAILURE);                             \
+      }                                                 \
+      p;                                                \
+    })
+
 // Compound Literal.
 #define STDCL(type, x) ((void*)&(type){(x)})
 
@@ -63,7 +81,8 @@ struct StdVec
 };
 typedef struct StdVec StdVec;
 
-// Create a new stdvec.
+// Creates a new StdVec. It sets the element size
+// to `stride`, and allocates `stride` bytes of memory.
 StdVec
 stdvec_create(size_t stride)
 {
