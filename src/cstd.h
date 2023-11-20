@@ -86,7 +86,7 @@ typedef struct StdVec StdVec;
 StdVec
 stdvec_create(size_t stride)
 {
-  void *data = malloc(stride);
+  void *data = __STD_S_MALLOC(stride);
   if (!data) {
     __STD_PANIC("could not allocate %zu bytes", stride);
   }
@@ -103,10 +103,7 @@ StdVec
 stdvec_wcap(size_t stride, size_t cap)
 {
   size_t bytes = stride*cap;
-  void *data = malloc(bytes);
-  if (!data) {
-    __STD_PANIC("could not allocate %zu bytes", bytes);
-  }
+  void *data = __STD_S_MALLOC(bytes);
   return (StdVec) {
     .data = data,
     .cap = cap,
