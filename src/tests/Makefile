@@ -6,13 +6,13 @@ DEPS := ../cstd.h
 .PHONY: all clean run
 
 # Add new bin names.
-all: vec
+all: vec str
 
 # Add new object.
 vec: vec.o $(DEPS)
 	$(CC) $(CFLAGS) -o $@ $^
 
-umap: umap.o $(DEPS)
+str: str.o $(DEPS)
 	$(CC) $(CFLAGS) -o $@ $^
 
 %.o: %.c $(DEPS)
@@ -21,9 +21,11 @@ umap: umap.o $(DEPS)
 # Add new run cmds.
 run: all
 	./vec
+	./str
 
 vrun: all
 	valgrind ./vec
+	valgrind ./str
 
 # Add new remove bins.
 clean:

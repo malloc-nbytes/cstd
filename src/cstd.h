@@ -219,6 +219,8 @@ stdvec_rev(StdVec *stdvec)
 }
 #endif // STDVEC_IMPL
 
+//////////////////////////////
+// StdVec IMPLEMENTATION
 #ifdef STDSTR_IMPL
 
 struct StdStr
@@ -236,7 +238,6 @@ stdstr_new(void)
 {
   StdStr str;
   str.data = __STD_S_MALLOC(1);
-  str.data[0] = '\0';
   str.len = 0;
   str.cap = 1;
   return str;
@@ -264,7 +265,7 @@ stdstr_push(StdStr *str, char c)
 void
 stdstr_append(StdStr *str, char *value)
 {
-  for (size_t i = 0; i < strlen(value); ++i) {
+  for (size_t i = 0; value[i] != '\0'; ++i) {
     stdstr_push(str, value[i]);
   }
 }
@@ -276,6 +277,29 @@ stdstr_from(char *from)
   StdStr str = stdstr_new();
   stdstr_append(&str, from);
   return str;
+}
+
+void
+stdstr_clr(StdStr *str)
+{
+  str->len = 0;
+}
+
+void
+stdstr_print(StdStr *str)
+{
+  for (size_t i = 0; i < str->len; ++i) {
+    printf("%c", str->data[i]);
+  }
+}
+
+void
+stdstr_free(StdStr *str)
+{
+  __STD_CHECK_MEM(str->data);
+  free(str->data);
+  str->data = NULL;
+  str->len = str->cap = 0;
 }
 
 #endif // STDSTR_IMPL

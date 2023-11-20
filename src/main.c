@@ -10,10 +10,8 @@ int main(void)
   char *from = "foo bar baz";
 
   stdstr_append(&s, from);
-
-  for (size_t i = 0; i < s.len; ++i) {
-    printf("%c\n", s.data[i]);
-  }
+  
+  stdstr_print(&s);
 
   return 0;
 }
