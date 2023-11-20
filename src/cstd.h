@@ -3,6 +3,7 @@
 
 #include <aio.h>
 #include <assert.h>
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -217,5 +218,70 @@ stdvec_rev(StdVec *stdvec)
   }
 }
 #endif // STDVEC_IMPL
+
+#ifdef STDSTRING_IMPL
+
+struct StdStr
+{
+  char *data;
+  size_t len;
+  size_t cap;
+};
+typedef struct StdStr StdStr;
+
+// Creates a new stdstr. Allocates 1 byte
+// of data for the null byte.
+StdStr
+stdstr_new(void)
+{
+  StdStr str;
+  str.data = __STD_S_MALLOC(1);
+  str.cap = str.len = 0;
+  return str;
+}
+
+// Pushes a char into the str.
+// This function is different from stdstr_append
+// as this only pushes a char.
+// Will reallocate data if needed.
+void
+stdstr_push(StdStr *str, char c)
+{
+  if (str->len >= str->cap) {
+    // +1 for null byte.
+    str->data = realloc(str->data, (str->cap * 2) + 1);
+    if (!str->data) {
+      __STD_PANIC("failed realloc because: %s", strerror(errno));
+    }
+    (void)memset(str->data + str->cap + 1, '\0', str->cap);
+    str->cap *= 2;
+  }
+  str->data[str->len++] = c;
+}
+
+// Appends a char * into the end of str.
+// This function is different from stdstr_push
+// as this appends a char * instead of a single char.
+// It calls stdstr_push so no reallocation is needed.
+void
+stdstr_append(StdStr *str, char *value)
+{
+  if (str->len >= str->cap) {
+    for (size_t i = 0; value[i] != '\0'; ++i) {
+      stdstr_push(str, value[i]);
+    }
+  }
+}
+
+// Creates a new stdstr with data from `from`.
+StdStr
+stdstr_from(char *from)
+{
+  StdStr str = stdstr_new();
+  stdstr_append(str, from);
+  return str;
+}
+
+#endif // STDSTRING_IMPL
 
 #endif // STD_H
