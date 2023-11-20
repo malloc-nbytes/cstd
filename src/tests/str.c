@@ -5,6 +5,17 @@
 #include <stdio.h>
 
 void
+test_clearing_str(void)
+{
+  char s[] = "hello";
+  StdStr str = stdstr_from(s);
+  cut_assert_eq(str.len, 5);
+  stdstr_clr(&str);
+  cut_assert_eq(str.len, 0);
+  stdstr_free(&str);
+}
+
+void
 test_appending_a_str(void)
 {
   char *s = "foo bar baz";
