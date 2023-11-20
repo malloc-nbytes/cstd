@@ -24,4 +24,11 @@
 
 set -xe
 
-gcc -g -Wall -Wextra -o main main.c
+cd ./tests
+make clean
+make
+
+# Run the tests
+if [ "$1" == "-r" ]; then
+    make vrun
+fi
