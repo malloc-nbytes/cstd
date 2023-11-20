@@ -29,4 +29,4 @@ vrun: all
 
 # Add new remove bins.
 clean:
-	rm -f *.o vec
+	rm -f *.o vec str

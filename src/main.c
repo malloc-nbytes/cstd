@@ -5,13 +5,9 @@
 
 int main(void)
 {
-  StdStr s = stdstr_new();
-
-  char *from = "foo bar baz";
-
-  stdstr_append(&s, from);
-  
+  StdStr s = stdstr_from_file("./input.txt");
   stdstr_print(&s);
+  stdstr_free(&s);
 
   return 0;
 }

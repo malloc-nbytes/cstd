@@ -302,6 +302,38 @@ stdstr_free(StdStr *str)
   str->len = str->cap = 0;
 }
 
-#endif // STDSTR_IMPL
+// Create a new stdstr from the contents
+// of a file. Takes a const char * instead
+// of FILE * to avoid dealing with who
+// closes the FILE *.
+StdStr
+stdstr_from_file(const char *filepath)
+{
+  StdStr str = stdstr_new();
+  char *buf = 0;
+  long len;
 
+  FILE *fp = fopen(filepath, "r");
+
+  if (!fp) {
+    __STD_PANIC("could not open %s because %s", filepath, strerror(errno));
+  }
+
+  fseek(fp, 0, SEEK_END);
+  len = ftell(fp);
+  fseek(fp, 0, SEEK_SET);
+  buf = __STD_S_MALLOC(len);
+  fread(buf, 1, len, fp);
+
+  for (long i = 0; i < len; ++i) {
+    stdstr_push(&str, buf[i]);
+  }
+
+  free(buf);
+  fclose(fp);
+
+  return str;
+}
+
+#endif // STDSTR_IMPL
 #endif // STD_H

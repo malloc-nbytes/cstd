@@ -4,6 +4,33 @@
 #include "../cstd.h"
 #include <stdio.h>
 
+#define FILEPATH "./sample-files/basic-words-multiline.txt"
+
+void
+test_reading_from_file(void)
+{
+  StdStr str = stdstr_from_file(FILEPATH);
+
+  char *buf = 0;
+  long len;
+
+  FILE *fp = fopen(FILEPATH, "r");
+
+  fseek(fp, 0, SEEK_END);
+  len = ftell(fp);
+  fseek(fp, 0, SEEK_SET);
+  buf = __STD_S_MALLOC(len);
+  fread(buf, 1, len, fp);
+
+  for (long i = 0; i < len; ++i) {
+    cut_assert_eq(str.data[i], buf[i]);
+  }
+
+  free(buf);
+  fclose(fp);
+  stdstr_free(&str);
+}
+
 void
 test_clearing_str(void)
 {
@@ -66,6 +93,7 @@ main(void)
   test_creating_a_str_and_push();
   test_creating_a_str_with_from();
   test_appending_a_str();
+  test_reading_from_file();
   CUT_END;
   return 0;
 }
