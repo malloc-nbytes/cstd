@@ -262,6 +262,48 @@ stdiota_fill(int *arr, size_t len)
   }
 }
 
+// Returns 1 if all elements in `arr` satisfy
+// the function `boolfunc`. Otherwise it
+// returns 0.
+int
+stdall_of(void *arr, size_t stride, size_t len, int (boolfunc)(const void *))
+{
+  for (size_t i = 0; i < len; ++i) {
+    if (!boolfunc(arr+i*stride)) {
+      return 0;
+    }
+  }
+  return 1;
+}
+
+// Returns 1 if any elements in `arr` satisfy
+// the function `boolfunc`. Otherwise it
+// returns 0.
+int
+stdany_of(void *arr, size_t stride, size_t len, int (boolfunc)(const void *))
+{
+  for (size_t i = 0; i < len; ++i) {
+    if (boolfunc(arr+i*stride)) {
+      return 1;
+    }
+  }
+  return 0;
+}
+
+// Returns 1 if none of the elements in `arr` satisfy
+// the function `boolfunc`. Otherwise it
+// returns 0.
+int
+stdnone_of(void *arr, size_t stride, size_t len, int (boolfunc)(const void *))
+{
+  for (size_t i = 0; i < len; ++i) {
+    if (boolfunc(arr+i*stride)) {
+      return 0;
+    }
+  }
+  return 1;
+}
+
 #endif // STDFUNCS_IMPL
 
 #endif // STD_H
