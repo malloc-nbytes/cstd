@@ -219,7 +219,7 @@ stdvec_rev(StdVec *stdvec)
 }
 #endif // STDVEC_IMPL
 
-#ifdef STDSTRING_IMPL
+#ifdef STDSTR_IMPL
 
 struct StdStr
 {
@@ -236,7 +236,9 @@ stdstr_new(void)
 {
   StdStr str;
   str.data = __STD_S_MALLOC(1);
-  str.cap = str.len = 0;
+  str.data[0] = '\0';
+  str.len = 0;
+  str.cap = 1;
   return str;
 }
 
@@ -247,14 +249,10 @@ stdstr_new(void)
 void
 stdstr_push(StdStr *str, char c)
 {
+  __STD_CHECK_MEM(str->data);
   if (str->len >= str->cap) {
-    // +1 for null byte.
-    str->data = realloc(str->data, (str->cap * 2) + 1);
-    if (!str->data) {
-      __STD_PANIC("failed realloc because: %s", strerror(errno));
-    }
-    (void)memset(str->data + str->cap + 1, '\0', str->cap);
     str->cap *= 2;
+    str->data = realloc(str->data, str->cap);
   }
   str->data[str->len++] = c;
 }
@@ -266,10 +264,8 @@ stdstr_push(StdStr *str, char c)
 void
 stdstr_append(StdStr *str, char *value)
 {
-  if (str->len >= str->cap) {
-    for (size_t i = 0; value[i] != '\0'; ++i) {
-      stdstr_push(str, value[i]);
-    }
+  for (size_t i = 0; i < strlen(value); ++i) {
+    stdstr_push(str, value[i]);
   }
 }
 
@@ -278,10 +274,10 @@ StdStr
 stdstr_from(char *from)
 {
   StdStr str = stdstr_new();
-  stdstr_append(str, from);
+  stdstr_append(&str, from);
   return str;
 }
 
-#endif // STDSTRING_IMPL
+#endif // STDSTR_IMPL
 
 #endif // STD_H
