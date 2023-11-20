@@ -8,6 +8,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+// NOTE: all functions/macros starting with two
+// underscores `__` are to be treated as private.
+
 // A variadic panic out and exit with a message.
 // Example usage:
 //   int num;
@@ -346,6 +349,48 @@ stdstr_from_file(const char *filepath)
   fclose(fp);
 
   return str;
+}
+
+// Private function to shift all elements left in
+// `str` from `start` -> `end`.
+void
+__stdstr_shift_elems_left(StdStr *str, size_t start, size_t end)
+{
+  if (start > str->len) {
+    __STD_PANIC("index %zu is out of bounds of length %zu", start, str->len);
+  }
+  if (end > str->len) {
+    __STD_PANIC("index %zu is out of bounds of length %zu", end, str->len);
+  }
+  for (size_t i = start; i < end-1; ++i) {
+    str->data[i] = str->data[i+1];
+  }
+}
+
+// Remove a char at `idx`. This function decrements
+// the length of `str`.
+void
+stdstr_rm_at(StdStr *str, size_t idx)
+{
+  if (idx >= str->len) {
+    __STD_PANIC("index %zu is out of bounds of length %zu", idx, str->len);
+  }
+  __stdstr_shift_elems_left(str, idx, str->len);
+  str->len--;
+}
+
+// Remove all occurences of `value` in `str`.
+// This function does not decrement `len` since
+// it calls stdstr_rm_at which does decrement it.
+void
+stdstr_rmchar(StdStr *str, char value)
+{
+  for (size_t i = 0; i < str->len; ++i) {
+    if (str->data[i] == value) {
+      stdstr_rm_at(str, i);
+      i--;
+    }
+  }
 }
 
 #endif // STDSTR_IMPL

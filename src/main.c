@@ -5,9 +5,9 @@
 
 int main(void)
 {
-  StdStr s = stdstr_from_file("./input.txt");
-  stdstr_print(&s);
-  stdstr_free(&s);
-
+  StdStr str = stdstr_from("lhello worldl");
+  stdstr_rmchar(&str, 'l');
+  stdstr_print(&str);
+  stdstr_free(&str);
   return 0;
 }
