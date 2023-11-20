@@ -223,6 +223,9 @@ stdvec_rev(StdVec *stdvec)
 // StdVec IMPLEMENTATION
 #ifdef STDSTR_IMPL
 
+// This implementation of a string
+// does not use a null byte. It entirely
+// depends on `len` and `cap`.
 struct StdStr
 {
   char *data;
@@ -279,12 +282,18 @@ stdstr_from(char *from)
   return str;
 }
 
+// Clear the contents of the `str`.
+// All that is needed is setting the
+// `len` to 0.
 void
 stdstr_clr(StdStr *str)
 {
   str->len = 0;
 }
 
+// Print the data instead of `str`.
+// We need this because StdStr does
+// not use a null byte.
 void
 stdstr_print(StdStr *str)
 {
@@ -293,6 +302,8 @@ stdstr_print(StdStr *str)
   }
 }
 
+// Free the underlying contents of `str`
+// aka the `data`.
 void
 stdstr_free(StdStr *str)
 {
@@ -319,6 +330,8 @@ stdstr_from_file(const char *filepath)
     __STD_PANIC("could not open %s because %s", filepath, strerror(errno));
   }
 
+  // Get the size of the file and load
+  // it into buf.
   fseek(fp, 0, SEEK_END);
   len = ftell(fp);
   fseek(fp, 0, SEEK_SET);
