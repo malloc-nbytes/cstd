@@ -30,5 +30,8 @@ make
 
 # Run the tests
 if [ "$1" == "-r" ]; then
+    make run
+else if [ "$1" == "-v" ]; then
     make vrun
+fi
 fi
