@@ -240,4 +240,28 @@ stdvec_rev(StdVec *stdvec)
 }
 #endif // STDVEC_IMPL
 
+//////////////////////////////
+// Functions IMPLEMENTATION
+#ifdef STDFUNCS_IMPL
+
+// Returns an integer that increments whenever
+// the function gets called.
+int
+stdiota(void)
+{
+  static int __iota_incrementor = 0;
+  return __iota_incrementor++;
+}
+
+// Fill an array with stdiota.
+void
+stdiota_fill(int *arr, size_t len)
+{
+  for (size_t i = 0; i < len; ++i) {
+    arr[i] = stdiota();
+  }
+}
+
+#endif // STDFUNCS_IMPL
+
 #endif // STD_H

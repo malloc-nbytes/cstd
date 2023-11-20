@@ -6,13 +6,13 @@ DEPS := ../cstd.h
 .PHONY: all clean run
 
 # Add new bin names.
-all: vec
+all: vec iota
 
 # Add new object.
 vec: vec.o $(DEPS)
 	$(CC) $(CFLAGS) -o $@ $^
 
-umap: umap.o $(DEPS)
+iota: iota.o $(DEPS)
 	$(CC) $(CFLAGS) -o $@ $^
 
 %.o: %.c $(DEPS)
@@ -21,9 +21,11 @@ umap: umap.o $(DEPS)
 # Add new run cmds.
 run: all
 	./vec
+	./iota
 
 vrun: all
 	valgrind ./vec
+	valgrind ./iota
 
 # Add new remove bins.
 clean:
