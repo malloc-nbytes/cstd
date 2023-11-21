@@ -22,7 +22,7 @@
 - [ ] list
 - [ ] heap
 
-* Functions [0%]
+* Functions [8%]
 - [ ] for_each
 - [ ] copy
 - [ ] copyn
@@ -31,7 +31,7 @@
 - [ ] none_of
 - [ ] fill
 - [ ] filln
-- [ ] iota
+- [X] iota
 - [ ] swap
 - [ ] is_sorted
 - [ ] max(int, int)

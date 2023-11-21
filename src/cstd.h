@@ -240,4 +240,70 @@ stdvec_rev(StdVec *stdvec)
 }
 #endif // STDVEC_IMPL
 
+//////////////////////////////
+// Functions IMPLEMENTATION
+#ifdef STDFUNCS_IMPL
+
+// Returns an integer that increments whenever
+// the function gets called.
+int
+stdiota(void)
+{
+  static int __iota_incrementor = 0;
+  return __iota_incrementor++;
+}
+
+// Fill an array with stdiota.
+void
+stdiota_fill(int *arr, size_t len)
+{
+  for (size_t i = 0; i < len; ++i) {
+    arr[i] = stdiota();
+  }
+}
+
+// Returns 1 if all elements in `arr` satisfy
+// the function `boolfunc`. Otherwise it
+// returns 0.
+int
+stdall_of(void *arr, size_t stride, size_t len, int (boolfunc)(const void *))
+{
+  for (size_t i = 0; i < len; ++i) {
+    if (!boolfunc(arr+i*stride)) {
+      return 0;
+    }
+  }
+  return 1;
+}
+
+// Returns 1 if any elements in `arr` satisfy
+// the function `boolfunc`. Otherwise it
+// returns 0.
+int
+stdany_of(void *arr, size_t stride, size_t len, int (boolfunc)(const void *))
+{
+  for (size_t i = 0; i < len; ++i) {
+    if (boolfunc(arr+i*stride)) {
+      return 1;
+    }
+  }
+  return 0;
+}
+
+// Returns 1 if none of the elements in `arr` satisfy
+// the function `boolfunc`. Otherwise it
+// returns 0.
+int
+stdnone_of(void *arr, size_t stride, size_t len, int (boolfunc)(const void *))
+{
+  for (size_t i = 0; i < len; ++i) {
+    if (boolfunc(arr+i*stride)) {
+      return 0;
+    }
+  }
+  return 1;
+}
+
+#endif // STDFUNCS_IMPL
+
 #endif // STD_H
