@@ -20,6 +20,20 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 
+// USAGE //////////////////////////////////////////////
+// To use, simply #include this file in your project
+// and #define one of the implementations.
+// Example:
+//
+//   #define STDVEC_IMPL
+//   #include "cstd.h"
+//
+// The current possible implementations are:
+//  STDVEC_IMPL   -> Provides a generic dynamic array.
+//  STDSTR_IMPL   -> Provides a string implementation.
+//  STDFUNCS_IMPL -> Provides generic functions.
+///////////////////////////////////////////////////////
+
 #ifndef STD_H
 #define STD_H
 
