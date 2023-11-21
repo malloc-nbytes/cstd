@@ -13,11 +13,11 @@
 - [ ] deque
 - [ ] queue
 - [ ] stack
-- [ ] optional
+- [X] option
 - [ ] pair
 - [ ] variant
 - [ ] arena
-- [ ] string
+- [X] string
 - [ ] string_view
 - [ ] list
 - [ ] heap
@@ -30,4 +30,3 @@
 - [X] iota
 - [ ] swap
 - [ ] is_sorted
-- [ ] max(int, int)
