@@ -1,11 +1,11 @@
 #+TITLE: TODO
 
 * Generic [0%]
-- [ ] Create a malloc() wrapper so we don't keep checking to see if =malloc()= succeeded or not.
+- [X] Create a malloc() wrapper so we don't keep checking to see if =malloc()= succeeded or not.
 - [ ] Optimize stdvec_rev
 
 * Data Structures [0%]
-- [ ] vec
+- [X] vec
 - [ ] unordered map
 - [ ] unordered set
 - [ ] map
@@ -23,14 +23,10 @@
 - [ ] heap
 
 * Functions [8%]
-- [ ] for_each
-- [ ] copy
-- [ ] copyn
-- [ ] all_of
-- [ ] any_of
-- [ ] none_of
-- [ ] fill
-- [ ] filln
+- [X] for_each
+- [X] all_of
+- [X] any_of
+- [X] none_of
 - [X] iota
 - [ ] swap
 - [ ] is_sorted
