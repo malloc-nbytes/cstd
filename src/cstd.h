@@ -306,4 +306,67 @@ stdnone_of(void *arr, size_t stride, size_t len, int (boolfunc)(const void *))
 
 #endif // STDFUNCS_IMPL
 
+#ifdef STDSTACK_IMPL
+
+struct StdStack
+{
+  void *data;
+  size_t stride;
+  size_t len;
+  size_t cap;
+};
+typedef struct StdStack StdStack;
+
+StdStack
+stdstack_new(size_t stride)
+{
+  StdStack stack;
+  stack.data   = __STD_S_MALLOC(stride);
+  stack.cap    = 1;
+  stack.len    = 0;
+  stack.stride = stride;
+  return stack;
+}
+
+void
+stdstack_free(StdStack *stack)
+{
+  __STD_CHECK_MEM(stack->data);
+  free(stack->data);
+  stack->data = NULL;
+  stack->len = stack->cap = stack->stride = 0;
+}
+
+int
+stdstack_empty(StdStack *stack)
+{
+  return stack->len == 0;
+}
+
+void *
+stdstack_peek(StdStack *stack)
+{
+  return stack->len == 0 
+    ? NULL 
+    : stack->data+(stack->len-1)*stack->stride;
+}
+
+void
+stdstack_pop(StdStack *stack)
+{
+  if (stack->len == 0) {
+    __STD_PANIC("tried to pop element of a stack but its len = 0");
+  }
+  stack->len--;
+}
+
+void
+stdstack_push(StdStack *stack, void *value)
+{
+  __STD_CHECK_MEM(stack->data);
+  __STD_DA_APPEND(stack, data, stride, len, cap, value);
+}
+
+#endif // STDSTACK_IMPL
+
 #endif // STD_H

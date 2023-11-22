@@ -6,13 +6,16 @@ DEPS := ../cstd.h
 .PHONY: all clean run
 
 # Add new bin names.
-all: vec funcs
+all: vec funcs stack
 
 # Add new object.
 vec: vec.o $(DEPS)
 	$(CC) $(CFLAGS) -o $@ $^
 
-iota: funcs.o $(DEPS)
+funcs: funcs.o $(DEPS)
+	$(CC) $(CFLAGS) -o $@ $^
+
+stack: stack.o $(DEPS)
 	$(CC) $(CFLAGS) -o $@ $^
 
 %.o: %.c $(DEPS)
@@ -22,11 +25,13 @@ iota: funcs.o $(DEPS)
 run: all
 	./vec
 	./funcs
+	./stack
 
 vrun: all
 	valgrind ./vec
 	valgrind ./funcs
+	valgrind ./stack
 
 # Add new remove bins.
 clean:
-	rm -f *.o vec
+	rm -f *.o vec funcs stack
