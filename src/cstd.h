@@ -483,6 +483,8 @@ stdnone_of(void *arr, size_t stride, size_t len, int (boolfunc)(const void *))
 
 #endif // STDFUNCS_IMPL
 
+//////////////////////////////
+// StdStack IMPLEMENTATION
 #ifdef STDSTACK_IMPL
 
 struct StdStack
