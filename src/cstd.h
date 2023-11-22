@@ -110,7 +110,7 @@ typedef struct StdVec StdVec;
 // Creates a new StdVec. It sets the element size
 // to `stride`, and allocates `stride` bytes of memory.
 StdVec
-stdvec_create(size_t stride)
+stdvec_new(size_t stride)
 {
   void *data = __STD_S_MALLOC(stride);
   if (!data) {
@@ -171,6 +171,7 @@ stdvec_rm(StdVec *stdvec, void *elem)
   for (size_t i = 0; i < stdvec->len; ++i) {
     if (memcmp(stdvec_at(stdvec, i), elem, stdvec->stride) == 0) {
       stdvec_rm_at(stdvec, i);
+      --i;
     }
   }
 }
@@ -211,7 +212,7 @@ stdvec_free(StdVec *stdvec)
 StdVec
 stdvec_map(StdVec *stdvec, void (*mapfunc)(void *))
 {
-  StdVec mapped = stdvec_create(stdvec->stride);
+  StdVec mapped = stdvec_new(stdvec->stride);
   for (size_t i = 0; i < stdvec->len; i++) {
     mapfunc(stdvec_at(stdvec, i));
     stdvec_push(&mapped, stdvec_at(stdvec, i));
@@ -496,6 +497,8 @@ struct StdStack
 };
 typedef struct StdStack StdStack;
 
+// Create a new StdStack with element
+// size being `stride`.
 StdStack
 stdstack_new(size_t stride)
 {
@@ -507,6 +510,7 @@ stdstack_new(size_t stride)
   return stack;
 }
 
+// Free the underlying memory of `stack`.
 void
 stdstack_free(StdStack *stack)
 {
@@ -516,20 +520,25 @@ stdstack_free(StdStack *stack)
   stack->len = stack->cap = stack->stride = 0;
 }
 
+// Returns 1 if stack is empty, 0 otherwise.
 int
 stdstack_empty(StdStack *stack)
 {
   return stack->len == 0;
 }
 
+// Get the element at the end of `stack`
+// i.e., stack->len-1.
 void *
 stdstack_peek(StdStack *stack)
 {
-  return stack->len == 0 
-    ? NULL 
+  return stack->len == 0
+    ? NULL
     : stack->data+(stack->len-1)*stack->stride;
 }
 
+// Remove the value at the end of `stack`.
+// Panics if len = 0.
 void
 stdstack_pop(StdStack *stack)
 {
@@ -539,6 +548,7 @@ stdstack_pop(StdStack *stack)
   stack->len--;
 }
 
+// Push an element into `stack` at the end.
 void
 stdstack_push(StdStack *stack, void *value)
 {
