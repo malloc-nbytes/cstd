@@ -1,4 +1,5 @@
 #define CUT_ABORT_ON_FAIL
+#define CUT_SUPPRESS_TESTS
 #define CUT_IMPL
 #include "./cut.h"
 #define STDFUNCS_IMPL
