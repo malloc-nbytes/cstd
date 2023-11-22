@@ -1,6 +1,10 @@
 # Prerequisites
 *.d
 
+main
+vec
+str
+
 # Object files
 *.o
 *.ko

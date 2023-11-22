@@ -25,9 +25,13 @@
 
 #include <aio.h>
 #include <assert.h>
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+// NOTE: all functions/macros starting with two
+// underscores `__` are to be treated as private.
 
 // A variadic panic out and exit with a message.
 // Example usage:
@@ -239,6 +243,179 @@ stdvec_rev(StdVec *stdvec)
   }
 }
 #endif // STDVEC_IMPL
+
+//////////////////////////////
+// StdVec IMPLEMENTATION
+#ifdef STDSTR_IMPL
+
+// This implementation of a string
+// does not use a null byte. It entirely
+// depends on `len` and `cap`.
+struct StdStr
+{
+  char *data;
+  size_t len;
+  size_t cap;
+};
+typedef struct StdStr StdStr;
+
+// Creates a new stdstr. Allocates 1 byte
+// of data for the null byte.
+StdStr
+stdstr_new(void)
+{
+  StdStr str;
+  str.data = __STD_S_MALLOC(1);
+  str.len = 0;
+  str.cap = 1;
+  return str;
+}
+
+// Pushes a char into the str.
+// This function is different from stdstr_append
+// as this only pushes a char.
+// Will reallocate data if needed.
+void
+stdstr_push(StdStr *str, char c)
+{
+  __STD_CHECK_MEM(str->data);
+  if (str->len >= str->cap) {
+    str->cap *= 2;
+    str->data = realloc(str->data, str->cap);
+  }
+  str->data[str->len++] = c;
+}
+
+// Appends a char * into the end of str.
+// This function is different from stdstr_push
+// as this appends a char * instead of a single char.
+// It calls stdstr_push so no reallocation is needed.
+void
+stdstr_append(StdStr *str, char *value)
+{
+  for (size_t i = 0; value[i] != '\0'; ++i) {
+    stdstr_push(str, value[i]);
+  }
+}
+
+// Creates a new stdstr with data from `from`.
+StdStr
+stdstr_from(char *from)
+{
+  StdStr str = stdstr_new();
+  stdstr_append(&str, from);
+  return str;
+}
+
+// Clear the contents of the `str`.
+// All that is needed is setting the
+// `len` to 0.
+void
+stdstr_clr(StdStr *str)
+{
+  str->len = 0;
+}
+
+// Print the data instead of `str`.
+// We need this because StdStr does
+// not use a null byte.
+void
+stdstr_print(StdStr *str)
+{
+  for (size_t i = 0; i < str->len; ++i) {
+    printf("%c", str->data[i]);
+  }
+}
+
+// Free the underlying contents of `str`
+// aka the `data`.
+void
+stdstr_free(StdStr *str)
+{
+  __STD_CHECK_MEM(str->data);
+  free(str->data);
+  str->data = NULL;
+  str->len = str->cap = 0;
+}
+
+// Create a new stdstr from the contents
+// of a file. Takes a const char * instead
+// of FILE * to avoid dealing with who
+// closes the FILE *.
+StdStr
+stdstr_from_file(const char *filepath)
+{
+  StdStr str = stdstr_new();
+  char *buf = 0;
+  long len;
+
+  FILE *fp = fopen(filepath, "r");
+
+  if (!fp) {
+    __STD_PANIC("could not open %s because %s", filepath, strerror(errno));
+  }
+
+  // Get the size of the file and load
+  // it into buf.
+  fseek(fp, 0, SEEK_END);
+  len = ftell(fp);
+  fseek(fp, 0, SEEK_SET);
+  buf = __STD_S_MALLOC(len);
+  fread(buf, 1, len, fp);
+
+  for (long i = 0; i < len; ++i) {
+    stdstr_push(&str, buf[i]);
+  }
+
+  free(buf);
+  fclose(fp);
+
+  return str;
+}
+
+// Private function to shift all elements left in
+// `str` from `start` -> `end`.
+void
+__stdstr_shift_elems_left(StdStr *str, size_t start, size_t end)
+{
+  if (start > str->len) {
+    __STD_PANIC("index %zu is out of bounds of length %zu", start, str->len);
+  }
+  if (end > str->len) {
+    __STD_PANIC("index %zu is out of bounds of length %zu", end, str->len);
+  }
+  for (size_t i = start; i < end-1; ++i) {
+    str->data[i] = str->data[i+1];
+  }
+}
+
+// Remove a char at `idx`. This function decrements
+// the length of `str`.
+void
+stdstr_rm_at(StdStr *str, size_t idx)
+{
+  if (idx >= str->len) {
+    __STD_PANIC("index %zu is out of bounds of length %zu", idx, str->len);
+  }
+  __stdstr_shift_elems_left(str, idx, str->len);
+  str->len--;
+}
+
+// Remove all occurences of `value` in `str`.
+// This function does not decrement `len` since
+// it calls stdstr_rm_at which does decrement it.
+void
+stdstr_rmchar(StdStr *str, char value)
+{
+  for (size_t i = 0; i < str->len; ++i) {
+    if (str->data[i] == value) {
+      stdstr_rm_at(str, i);
+      i--;
+    }
+  }
+}
+
+#endif // STDSTR_IMPL
 
 //////////////////////////////
 // Functions IMPLEMENTATION
