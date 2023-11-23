@@ -558,6 +558,7 @@ stdstack_push(StdStack *stack, void *value)
 
 #endif // STDSTACK_IMPL
 
+<<<<<<< HEAD
 //////////////////////////////
 // StdPair IMPLEMENTATION
 #ifdef STDPAIR_IMPL
@@ -594,5 +595,86 @@ stdpair_snd(StdPair *pair)
 }
 
 #endif // STDPAIR_IMPL
+=======
+////////////////////////////////
+// StdQueue IMPLEMENTATION
+#ifdef STDQUEUE_IMPL
+
+struct StdQueue
+{
+  void *data;
+  size_t stride;
+  size_t len;
+  size_t cap;
+  size_t head;  // Index of the front of the queue
+};
+typedef struct StdQueue StdQueue;
+
+// Create a new StdQueue with element
+// size being `stride`.
+StdQueue
+stdqueue_new(size_t stride)
+{
+  StdQueue queue;
+  queue.data   = __STD_S_MALLOC(stride);
+  queue.cap    = 1;
+  queue.len    = 0;
+  queue.head   = 0;
+  queue.stride = stride;
+  return queue;
+}
+
+// Free the underlying memory of `queue`.
+void
+stdqueue_free(StdQueue *queue)
+{
+  __STD_CHECK_MEM(queue->data);
+  free(queue->data);
+  queue->data = NULL;
+  queue->len = queue->cap = queue->stride = queue->head = 0;
+}
+
+// Returns 1 if queue is empty, 0 otherwise.
+int
+stdqueue_empty(StdQueue *queue)
+{
+  return queue->len == 0;
+}
+
+// Get the element at the front of `queue`.
+// Returns NULL if the queue is empty.
+void *
+stdqueue_peek(StdQueue *queue)
+{
+  return queue->len == 0
+    ? NULL
+    : queue->data + queue->head * queue->stride;
+}
+
+// Remove the value at the front of `queue`.
+// Panics if len = 0.
+void
+stdqueue_dequeue(StdQueue *queue)
+{
+  if (queue->len == 0) {
+    __STD_PANIC("tried to dequeue from an empty queue");
+  }
+  queue->head = (queue->head + 1) % queue->cap;
+  queue->len--;
+}
+
+// Enqueue an element into `queue` at the end.
+void
+stdqueue_enqueue(StdQueue *queue, void *value)
+{
+  __STD_CHECK_MEM(queue->data);
+  __STD_DA_APPEND(queue, data, stride, len, cap, value);
+}
+
+#endif // STDQUEUE_IMPL
+
+
+
+>>>>>>> 40c7ab719da1e7b5af733a6682d83fdbf4164175
 
 #endif // STD_H
