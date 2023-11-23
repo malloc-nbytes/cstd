@@ -558,4 +558,41 @@ stdstack_push(StdStack *stack, void *value)
 
 #endif // STDSTACK_IMPL
 
+//////////////////////////////
+// StdPair IMPLEMENTATION
+#ifdef STDPAIR_IMPL
+
+struct StdPair
+{
+  void *fst;
+  void *snd;
+};
+typedef struct StdPair StdPair;
+
+// Create a new StdPair.
+StdPair
+stdpair_new(void *fst, void *snd)
+{
+  StdPair pair;
+  memcpy(&pair.fst, &fst, sizeof(fst));
+  memcpy(&pair.snd, &snd, sizeof(snd));
+  return pair;
+}
+
+// Get the first element of `pair`.
+void *
+stdpair_fst(StdPair *pair)
+{
+  return pair->fst;
+}
+
+// Get the second element of `pair`.
+void *
+stdpair_snd(StdPair *pair)
+{
+  return pair->snd;
+}
+
+#endif // STDPAIR_IMPL
+
 #endif // STD_H

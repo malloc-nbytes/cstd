@@ -6,7 +6,7 @@ DEPS := ../cstd.h
 .PHONY: all clean run
 
 # Add new bin names.
-all: vec funcs str stack
+all: vec funcs str stack pair
 
 # Add new object.
 vec: vec.o $(DEPS)
@@ -21,6 +21,9 @@ stack: stack.o $(DEPS)
 str: str.o $(DEPS)
 	$(CC) $(CFLAGS) -o $@ $^
 
+pair: pair.o $(DEPS)
+	$(CC) $(CFLAGS) -o $@ $^
+
 %.o: %.c $(DEPS)
 	$(CC) $(CFLAGS) -c -o $@ $<
 
@@ -30,13 +33,15 @@ run: all
 	./str
 	./funcs
 	./stack
+	./pair
 
 vrun: all
 	valgrind ./vec
 	valgrind ./funcs
 	valgrind ./stack
 	valgrind ./str
+	valgrind ./pair
 
 # Add new remove bins.
 clean:
-	rm -f *.o vec funcs stack str
+	rm -f *.o vec funcs stack str pair
