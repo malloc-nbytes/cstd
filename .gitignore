@@ -6,6 +6,7 @@ vec
 str
 funcs
 stack
+pair
 
 # Object files
 *.o

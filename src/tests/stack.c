@@ -20,6 +20,8 @@ test_inserting_large_num_of_elems(void)
     stdstack_pop(&s);
   }
 
+  cut_assert_null(stdstack_peek(&s));
+
   stdstack_free(&s);
 }
 
