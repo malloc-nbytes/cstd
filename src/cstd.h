@@ -558,7 +558,6 @@ stdstack_push(StdStack *stack, void *value)
 
 #endif // STDSTACK_IMPL
 
-<<<<<<< HEAD
 //////////////////////////////
 // StdPair IMPLEMENTATION
 #ifdef STDPAIR_IMPL
@@ -595,7 +594,7 @@ stdpair_snd(StdPair *pair)
 }
 
 #endif // STDPAIR_IMPL
-=======
+
 ////////////////////////////////
 // StdQueue IMPLEMENTATION
 #ifdef STDQUEUE_IMPL
@@ -672,9 +671,5 @@ stdqueue_enqueue(StdQueue *queue, void *value)
 }
 
 #endif // STDQUEUE_IMPL
-
-
-
->>>>>>> 40c7ab719da1e7b5af733a6682d83fdbf4164175
 
 #endif // STD_H
