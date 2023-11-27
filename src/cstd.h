@@ -304,6 +304,18 @@ stdnone_of(void *arr, size_t stride, size_t len, int (boolfunc)(const void *))
   return 1;
 }
 
+// Swaps element a with element b
+// complains if either is null for some reason
+#define stdswap(type)                     \
+        void stdswap_##type(type* _val1, type* _val2) \
+        {                                             \
+          if (_val1 == NULL || _val2 == NULL)         \
+            __STD_PANIC("Error: null pointer detected in stdswap_%s", #type); \
+          type tmp = *_val1;                          \
+          *_val1 = *_val2;                            \
+          *_val2 = tmp;                               \
+        }
+
 #endif // STDFUNCS_IMPL
 
 #endif // STD_H

@@ -75,6 +75,23 @@ test_basic_iota(int cur)
   return c;
 }
 
+stdswap(int);
+stdswap(char);
+
+void test_swap() {
+    int a_int = 3, b_int = 5;
+    int tst1 = a_int; int tst2 = b_int;
+    stdswap_int(&a_int, &b_int);
+    cut_assert_eq(a_int, tst2);
+    cut_assert_eq(b_int, tst1);
+
+    char a_char = 'a', b_char = 'b';
+    char t1 = a_char, t2 = b_char;
+    stdswap_char(&a_char, &b_char);
+    cut_assert_eq(a_char, t2);
+    cut_assert_eq(b_char, t1);
+}
+
 int
 main(void)
 {
@@ -84,6 +101,7 @@ main(void)
   test_all_of();
   test_any_of();
   test_none_of();
+  test_swap();
   CUT_END;
   return 0;
 }
