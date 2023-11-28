@@ -61,6 +61,15 @@ test_iota_fill(int cur)
   }
 }
 
+void 
+test_is_sorted(void)
+{
+  int arr[5] = {1,2,3,4,5};
+  cut_assert_true(is_sorted(arr, arr+4));
+  int arr2[5] = {5,4,3,2,1};
+  cut_assert_false(is_sorted(arr2, arr2+4));
+}
+
 int
 test_basic_iota(int cur)
 {
@@ -103,6 +112,7 @@ main(void)
   test_any_of();
   test_none_of();
   test_swap();
+  test_is_sorted();
   CUT_END;
   return 0;
 }

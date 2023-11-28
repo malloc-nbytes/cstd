@@ -316,6 +316,31 @@ stdnone_of(void *arr, size_t stride, size_t len, int (boolfunc)(const void *))
           *_val2 = tmp;                               \
         }
 
+
+int*
+is_sorted_until(int *first, int *last)
+{
+  printf("FIRST VALUE: %d\n\n", *first);
+    if (first != last)
+    {
+        int *next = first;
+        while (++next != last)
+        {
+          printf("first value: %d  next value: %d\n", *first, *next);
+            if (*next < *first)
+                return next;
+            first = next;
+        }
+    }
+    return last;
+}
+
+int 
+is_sorted(int *first, int *last)
+{
+  return is_sorted_until(first, last) == last ? 1 : 0;
+}
+
 #endif // STDFUNCS_IMPL
 
 #endif // STD_H
