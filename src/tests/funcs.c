@@ -61,13 +61,18 @@ test_iota_fill(int cur)
   }
 }
 
+int 
+compare_int(const void *a, const void *b) {
+    return (*(const int *)a - *(const int *)b);
+}
+
 void 
 test_is_sorted(void)
 {
   int arr[5] = {1,2,3,4,5};
-  cut_assert_true(is_sorted(arr, arr+4));
+  cut_assert_true(is_sorted(arr, arr+5, &compare_int));
   int arr2[5] = {5,4,3,2,1};
-  cut_assert_false(is_sorted(arr2, arr2+4));
+  cut_assert_false(is_sorted(arr2, arr2+5, &compare_int));
 }
 
 int

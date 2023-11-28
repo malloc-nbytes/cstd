@@ -317,17 +317,18 @@ stdnone_of(void *arr, size_t stride, size_t len, int (boolfunc)(const void *))
         }
 
 
-int*
-is_sorted_until(int *first, int *last)
+typedef int (*CompareFunction)(const void *, const void *);
+
+const void 
+*is_sorted_until(const void *first, const void *last, CompareFunction compare) 
 {
-  printf("FIRST VALUE: %d\n\n", *first);
-    if (first != last)
+    if (first != last) 
     {
-        int *next = first;
-        while (++next != last)
+        const void *next = first;
+        size_t size = sizeof(int);
+        while ((next = (const char *)next + size) != last) 
         {
-          printf("first value: %d  next value: %d\n", *first, *next);
-            if (*next < *first)
+            if (compare(next,first) < 0)
                 return next;
             first = next;
         }
@@ -336,10 +337,12 @@ is_sorted_until(int *first, int *last)
 }
 
 int 
-is_sorted(int *first, int *last)
+is_sorted(const void *first, const void *last, CompareFunction compare) 
 {
-  return is_sorted_until(first, last) == last ? 1 : 0;
+    return is_sorted_until(first, last, compare) == last ? 1 : 0;
 }
+
+
 
 #endif // STDFUNCS_IMPL
 
