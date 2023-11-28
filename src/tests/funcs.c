@@ -75,8 +75,9 @@ test_basic_iota(int cur)
   return c;
 }
 
-stdswap(int);
-stdswap(char);
+
+__STDSWAP(int);
+__STDSWAP(char);
 
 void test_swap() {
     int a_int = 3, b_int = 5;

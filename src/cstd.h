@@ -306,7 +306,7 @@ stdnone_of(void *arr, size_t stride, size_t len, int (boolfunc)(const void *))
 
 // Swaps element a with element b
 // complains if either is null for some reason
-#define stdswap(type)                     \
+#define __STDSWAP(type)                     \
         void stdswap_##type(type* _val1, type* _val2) \
         {                                             \
           if (_val1 == NULL || _val2 == NULL)         \
