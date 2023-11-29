@@ -310,7 +310,7 @@ stdnone_of(void *arr, size_t stride, size_t len, int (boolfunc)(const void *))
         void stdswap_##type(type* _val1, type* _val2) \
         {                                             \
           if (_val1 == NULL || _val2 == NULL)         \
-            __STD_PANIC("Error: null pointer detected in stdswap_%s", #type); \
+            __STD_PANIC("null pointer detected in stdswap_%s", #type); \
           type tmp = *_val1;                          \
           *_val1 = *_val2;                            \
           *_val2 = tmp;                               \
@@ -319,27 +319,25 @@ stdnone_of(void *arr, size_t stride, size_t len, int (boolfunc)(const void *))
 
 typedef int (*CompareFunction)(const void *, const void *);
 
-const void 
-*is_sorted_until(const void *first, const void *last, CompareFunction compare) 
+const void*
+std_is_sorted_until(const void *first, const void *last, size_t stride, CompareFunction compare)
 {
-    if (first != last) 
-    {
-        const void *next = first;
-        size_t size = sizeof(int);
-        while ((next = (const char *)next + size) != last) 
-        {
-            if (compare(next,first) < 0)
-                return next;
-            first = next;
-        }
+  if (first != last) {
+    const void *next = first;
+    while ((next = (const char *)next + stride) != last) {
+      if (compare(next,first) < 0) {
+        return next;
+      }
+      first = next;
     }
-    return last;
+  }
+  return last;
 }
 
-int 
-is_sorted(const void *first, const void *last, CompareFunction compare) 
+int
+std_is_sorted(const void *first, const void *last, size_t stride, CompareFunction compare)
 {
-    return is_sorted_until(first, last, compare) == last ? 1 : 0;
+  return std_is_sorted_until(first, last, stride, compare) == last;
 }
 
 
