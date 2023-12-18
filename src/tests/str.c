@@ -9,6 +9,20 @@
 #define FILEPATH1 "./sample-files/basic-words-multiline.txt"
 
 void
+test_split_on_char(void)
+{
+  cut_assert_true(0 && "UNIMPLEMENTED");
+
+  char *s = "hello world foo bar baz";
+  StdStr str = stdstr_from(s);
+
+  size_t splits_len;
+  StdStr *splits = stdstr_split_on_char(&str, ' ', &splits_len);
+
+  cut_assert_eq(splits_len, 5);
+}
+
+void
 test_str_to_cstr(void)
 {
   char *s = "hello world";
@@ -131,6 +145,7 @@ main(void)
   test_reading_from_file();
   test_removing_all_chars_matching_value();
   test_str_to_cstr();
+  test_split_on_char();
   CUT_END;
   return 0;
 }
