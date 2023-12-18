@@ -5,6 +5,9 @@ main
 vec
 str
 funcs
+stack
+pair
+queue
 
 # Object files
 *.o

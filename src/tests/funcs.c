@@ -1,4 +1,5 @@
 #define CUT_ABORT_ON_FAIL
+#define CUT_SUPPRESS_TESTS
 #define CUT_IMPL
 #include "./cut.h"
 #define STDFUNCS_IMPL
@@ -61,6 +62,20 @@ test_iota_fill(int cur)
   }
 }
 
+int 
+compare_int(const void *a, const void *b) {
+    return (*(const int *)a - *(const int *)b);
+}
+
+void 
+test_is_sorted(void)
+{
+  int arr[5] = {1,2,3,4,5};
+  cut_assert_true(is_sorted(arr, arr+5, &compare_int));
+  int arr2[5] = {5,4,3,2,1};
+  cut_assert_false(is_sorted(arr2, arr2+5, &compare_int));
+}
+
 int
 test_basic_iota(int cur)
 {
@@ -75,6 +90,24 @@ test_basic_iota(int cur)
   return c;
 }
 
+
+__STDSWAP(int);
+__STDSWAP(char);
+
+void test_swap() {
+    int a_int = 3, b_int = 5;
+    int tst1 = a_int; int tst2 = b_int;
+    stdswap_int(&a_int, &b_int);
+    cut_assert_eq(a_int, tst2);
+    cut_assert_eq(b_int, tst1);
+
+    char a_char = 'a', b_char = 'b';
+    char t1 = a_char, t2 = b_char;
+    stdswap_char(&a_char, &b_char);
+    cut_assert_eq(a_char, t2);
+    cut_assert_eq(b_char, t1);
+}
+
 int
 main(void)
 {
@@ -84,6 +117,8 @@ main(void)
   test_all_of();
   test_any_of();
   test_none_of();
+  test_swap();
+  test_is_sorted();
   CUT_END;
   return 0;
 }

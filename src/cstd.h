@@ -124,7 +124,7 @@ typedef struct StdVec StdVec;
 // Creates a new StdVec. It sets the element size
 // to `stride`, and allocates `stride` bytes of memory.
 StdVec
-stdvec_create(size_t stride)
+stdvec_new(size_t stride)
 {
   void *data = __STD_S_MALLOC(stride);
   if (!data) {
@@ -185,6 +185,7 @@ stdvec_rm(StdVec *stdvec, void *elem)
   for (size_t i = 0; i < stdvec->len; ++i) {
     if (memcmp(stdvec_at(stdvec, i), elem, stdvec->stride) == 0) {
       stdvec_rm_at(stdvec, i);
+      --i;
     }
   }
 }
@@ -225,7 +226,7 @@ stdvec_free(StdVec *stdvec)
 StdVec
 stdvec_map(StdVec *stdvec, void (*mapfunc)(void *))
 {
-  StdVec mapped = stdvec_create(stdvec->stride);
+  StdVec mapped = stdvec_new(stdvec->stride);
   for (size_t i = 0; i < stdvec->len; i++) {
     mapfunc(stdvec_at(stdvec, i));
     stdvec_push(&mapped, stdvec_at(stdvec, i));
@@ -495,6 +496,230 @@ stdnone_of(void *arr, size_t stride, size_t len, int (boolfunc)(const void *))
   return 1;
 }
 
+// Swaps element a with element b
+// complains if either is null for some reason
+#define __STDSWAP(type)                     \
+        void stdswap_##type(type* _val1, type* _val2) \
+        {                                             \
+          if (_val1 == NULL || _val2 == NULL)         \
+            __STD_PANIC("null pointer detected in stdswap_%s", #type); \
+          type tmp = *_val1;                          \
+          *_val1 = *_val2;                            \
+          *_val2 = tmp;                               \
+        }
+
+
+typedef int (*CompareFunction)(const void *, const void *);
+
+const void*
+std_is_sorted_until(const void *first, const void *last, size_t stride, CompareFunction compare)
+{
+  if (first != last) {
+    const void *next = first;
+    while ((next = (const char *)next + stride) != last) {
+      if (compare(next,first) < 0) {
+        return next;
+      }
+      first = next;
+    }
+  }
+  return last;
+}
+
+int
+std_is_sorted(const void *first, const void *last, size_t stride, CompareFunction compare)
+{
+  return std_is_sorted_until(first, last, stride, compare) == last;
+}
+
 #endif // STDFUNCS_IMPL
+
+//////////////////////////////
+// StdStack IMPLEMENTATION
+#ifdef STDSTACK_IMPL
+
+struct StdStack
+{
+  void *data;
+  size_t stride;
+  size_t len;
+  size_t cap;
+};
+typedef struct StdStack StdStack;
+
+// Create a new StdStack with element
+// size being `stride`.
+StdStack
+stdstack_new(size_t stride)
+{
+  StdStack stack;
+  stack.data   = __STD_S_MALLOC(stride);
+  stack.cap    = 1;
+  stack.len    = 0;
+  stack.stride = stride;
+  return stack;
+}
+
+// Free the underlying memory of `stack`.
+void
+stdstack_free(StdStack *stack)
+{
+  __STD_CHECK_MEM(stack->data);
+  free(stack->data);
+  stack->data = NULL;
+  stack->len = stack->cap = stack->stride = 0;
+}
+
+// Returns 1 if stack is empty, 0 otherwise.
+int
+stdstack_empty(StdStack *stack)
+{
+  return stack->len == 0;
+}
+
+// Get the element at the end of `stack`
+// i.e., stack->len-1.
+void *
+stdstack_peek(StdStack *stack)
+{
+  return stack->len == 0
+    ? NULL
+    : stack->data+(stack->len-1)*stack->stride;
+}
+
+// Remove the value at the end of `stack`.
+// Panics if len = 0.
+void
+stdstack_pop(StdStack *stack)
+{
+  if (stack->len == 0) {
+    __STD_PANIC("tried to pop element of a stack but its len = 0");
+  }
+  stack->len--;
+}
+
+// Push an element into `stack` at the end.
+void
+stdstack_push(StdStack *stack, void *value)
+{
+  __STD_CHECK_MEM(stack->data);
+  __STD_DA_APPEND(stack, data, stride, len, cap, value);
+}
+
+#endif // STDSTACK_IMPL
+
+//////////////////////////////
+// StdPair IMPLEMENTATION
+#ifdef STDPAIR_IMPL
+
+struct StdPair
+{
+  void *fst;
+  void *snd;
+};
+typedef struct StdPair StdPair;
+
+// Create a new StdPair.
+StdPair
+stdpair_new(void *fst, void *snd)
+{
+  StdPair pair;
+  memcpy(&pair.fst, &fst, sizeof(fst));
+  memcpy(&pair.snd, &snd, sizeof(snd));
+  return pair;
+}
+
+// Get the first element of `pair`.
+void *
+stdpair_fst(StdPair *pair)
+{
+  return pair->fst;
+}
+
+// Get the second element of `pair`.
+void *
+stdpair_snd(StdPair *pair)
+{
+  return pair->snd;
+}
+
+#endif // STDPAIR_IMPL
+
+////////////////////////////////
+// StdQueue IMPLEMENTATION
+#ifdef STDQUEUE_IMPL
+
+struct StdQueue
+{
+  void *data;
+  size_t stride;
+  size_t len;
+  size_t cap;
+  size_t head;  // Index of the front of the queue
+};
+typedef struct StdQueue StdQueue;
+
+// Create a new StdQueue with element
+// size being `stride`.
+StdQueue
+stdqueue_new(size_t stride)
+{
+  StdQueue queue;
+  queue.data   = __STD_S_MALLOC(stride);
+  queue.cap    = 1;
+  queue.len    = 0;
+  queue.head   = 0;
+  queue.stride = stride;
+  return queue;
+}
+
+// Free the underlying memory of `queue`.
+void
+stdqueue_free(StdQueue *queue)
+{
+  __STD_CHECK_MEM(queue->data);
+  free(queue->data);
+  queue->data = NULL;
+  queue->len = queue->cap = queue->stride = queue->head = 0;
+}
+
+// Returns 1 if queue is empty, 0 otherwise.
+int
+stdqueue_empty(StdQueue *queue)
+{
+  return queue->len == 0;
+}
+
+// Get the element at the front of `queue`.
+// Returns NULL if the queue is empty.
+void *
+stdqueue_peek(StdQueue *queue)
+{
+  return queue->len == 0
+    ? NULL
+    : queue->data + queue->head * queue->stride;
+}
+
+// Remove the value at the front of `queue`.
+// Panics if len = 0.
+void
+stdqueue_dequeue(StdQueue *queue)
+{
+  if (queue->len == 0) {
+    __STD_PANIC("tried to dequeue from an empty queue");
+  }
+  queue->head = (queue->head + 1) % queue->cap;
+  queue->len--;
+}
+
+// Enqueue an element into `queue` at the end.
+void
+stdqueue_enqueue(StdQueue *queue, void *value)
+{
+  __STD_CHECK_MEM(queue->data);
+  __STD_DA_APPEND(queue, data, stride, len, cap, value);
+}
+
+#endif // STDQUEUE_IMPL
 
 #endif // STD_H
