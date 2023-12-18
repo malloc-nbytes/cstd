@@ -322,6 +322,25 @@ stdstr_from(char *from)
   return str;
 }
 
+// Returns a COPY of the c_str equivalent of
+// the StdStr that is passed. Allocates
+// str->len+1 bytes.
+char *
+stdstr_to_cstr(StdStr *str)
+{
+  char *cstr = __STD_S_MALLOC(str->len+1);
+  memcpy(cstr, str->data, str->len);
+  cstr[str->len] = '\0';
+  return cstr;
+}
+
+// Returns the length of the StdStr.
+size_t
+stdstr_len(StdStr *str)
+{
+  return str->len;
+}
+
 // Clear the contents of the `str`.
 // All that is needed is setting the
 // `len` to 0.

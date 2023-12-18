@@ -9,6 +9,17 @@
 #define FILEPATH1 "./sample-files/basic-words-multiline.txt"
 
 void
+test_str_to_cstr(void)
+{
+  char *s = "hello world";
+  StdStr str = stdstr_from(s);
+  char *cstr = stdstr_to_cstr(&str);
+  cut_assert_eqstr(cstr, s);
+  stdstr_free(&str);
+  free(cstr);
+}
+
+void
 test_removing_all_chars_matching_value(void)
 {
   char *s = "lhello worldl";
@@ -119,6 +130,7 @@ main(void)
   test_appending_a_str();
   test_reading_from_file();
   test_removing_all_chars_matching_value();
+  test_str_to_cstr();
   CUT_END;
   return 0;
 }
