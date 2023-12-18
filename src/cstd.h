@@ -322,6 +322,54 @@ stdstr_from(char *from)
   return str;
 }
 
+StdStr *
+stdstr_split_on_char(StdStr *str, char delim, size_t *splits_len)
+{
+  if (str->len == 0) {
+    return NULL;
+  }
+
+  size_t
+    splits_cap = 10,
+    buff_cap = 32,
+    buff_len = 0;
+
+  StdStr *splits = __STD_S_MALLOC(sizeof(StdStr *)*splits_cap);
+  char *buff = __STD_S_MALLOC(sizeof(char)*buff_cap);
+  memset(buff, '\0', buff_cap);
+
+  *splits_len = 0;
+
+  for (size_t i = 0; i < str->len; ++i) {
+    char c = str->data[i];
+    if (c == delim) {
+      if (*splits_len >= splits_cap) {
+        splits_cap *= 2;
+        splits = realloc(splits, splits_cap*sizeof(StdStr *));
+      }
+      splits[*splits_len++] = stdstr_from(buff);
+      memset(buff, '\0', buff_cap);
+      buff_len = 0;
+    }
+    else {
+      if (buff_len >= buff_cap) {
+        buff_cap *= 2;
+        buff = realloc(buff, buff_cap);
+        memset(buff+buff_len, '\0', buff_cap-buff_len);
+      }
+      buff[buff_len++] = c;
+    }
+  }
+
+  if (*splits_len >= splits_cap) {
+    splits_cap *= 2;
+    splits = realloc(splits, splits_cap*sizeof(StdStr *));
+  }
+  splits[*splits_len] = stdstr_from(buff);
+
+  return splits;
+}
+
 // Returns a COPY of the c_str equivalent of
 // the StdStr that is passed. Allocates
 // str->len+1 bytes.
