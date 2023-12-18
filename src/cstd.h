@@ -482,6 +482,44 @@ stdnone_of(void *arr, size_t stride, size_t len, int (boolfunc)(const void *))
   return 1;
 }
 
+// Swaps element a with element b
+// complains if either is null for some reason
+#define __STDSWAP(type)                     \
+        void stdswap_##type(type* _val1, type* _val2) \
+        {                                             \
+          if (_val1 == NULL || _val2 == NULL)         \
+            __STD_PANIC("null pointer detected in stdswap_%s", #type); \
+          type tmp = *_val1;                          \
+          *_val1 = *_val2;                            \
+          *_val2 = tmp;                               \
+        }
+
+
+typedef int (*CompareFunction)(const void *, const void *);
+
+const void*
+std_is_sorted_until(const void *first, const void *last, size_t stride, CompareFunction compare)
+{
+  if (first != last) {
+    const void *next = first;
+    while ((next = (const char *)next + stride) != last) {
+      if (compare(next,first) < 0) {
+        return next;
+      }
+      first = next;
+    }
+  }
+  return last;
+}
+
+int
+std_is_sorted(const void *first, const void *last, size_t stride, CompareFunction compare)
+{
+  return std_is_sorted_until(first, last, stride, compare) == last;
+}
+
+
+
 #endif // STDFUNCS_IMPL
 
 //////////////////////////////
